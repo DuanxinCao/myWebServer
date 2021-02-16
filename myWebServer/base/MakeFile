@@ -1,0 +1,71 @@
+CurrentDir=`pwd`
+BuildDir=${CurrentDir}/build
+LibDir=${BuildDir}/lib
+ObjDir=${BuildDir}/obj
+$(shell mkdir -p ${LibDir})
+$(shell mkdir -p ${ObjDir})
+
+Target=libbase.a
+Source:=$(wildcard *.cpp)
+
+CC=g++
+CPPFLAGS=-Wall -c -O2 
+LIBS=-lrt -lpthread
+
+
+
+.PHONY:all clean
+default_target: all
+
+all:$(Target)
+	# @echo $(Source)
+
+$(Target):$(patsubst %.cpp,%.o,$(Source))
+	ar rc $@ $^
+	mv $^ ${ObjDir}
+	mv $@ $(LibDir)
+
+
+
+AsyncLogging.o: AsyncLogging.cpp AsyncLogging.h CountDownLatch.h \
+ Condition.h MutexLock.h noncopyable.h LogStream.h Thread.h LogFile.h \
+ FileUtil.h
+	$(CC) $(CPPFLAGS) $^ -o $@
+
+
+LogStream.o: LogStream.cpp LogStream.h noncopyable.h
+	$(CC) $(CPPFLAGS) $^ -o $@
+
+Thread.o: Thread.cpp Thread.h CountDownLatch.h Condition.h MutexLock.h \
+ noncopyable.h CurrentThread.h
+	$(CC) $(CPPFLAGS) $^ -o $@
+
+LogFile.o: LogFile.cpp LogFile.h FileUtil.h noncopyable.h MutexLock.h
+	$(CC) $(CPPFLAGS) $^ -o $@
+
+CountDownLatch.o: CountDownLatch.cpp CountDownLatch.h Condition.h \
+ MutexLock.h noncopyable.h
+	$(CC) $(CPPFLAGS) $^ -o $@
+
+FileUtil.o: FileUtil.cpp FileUtil.h noncopyable.h
+	$(CC) $(CPPFLAGS) $^ -o $@
+
+Logging.o: Logging.cpp Logging.h LogStream.h noncopyable.h \
+ CurrentThread.h Thread.h CountDownLatch.h Condition.h MutexLock.h \
+ AsyncLogging.h
+	$(CC) $(CPPFLAGS) $^ -o $@
+
+# $(patsubst %.cpp,%.o,$(Source)):%.c
+# 	CC $(CPPFLAGS) -o $@ $<
+
+
+# -include $(patsubst %.cpp,%.o,$(Source))
+# %.d: %.c
+#     @set -e; \
+#     rm -f $@; \
+#     $(CC) -MM $(CPPFLAGS) $< > $@.$$$$; \
+#     sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+#     rm -f $@.$$$$
+
+clean:
+	rm -rf ${BuildDir}

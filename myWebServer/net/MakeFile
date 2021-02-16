@@ -1,0 +1,111 @@
+CurrentDir=`pwd`
+BuildDir=${CurrentDir}/build
+LibDir=${BuildDir}/bin
+ObjDir=${BuildDir}/obj
+$(shell mkdir -p ${LibDir})
+$(shell mkdir -p ${ObjDir})
+
+Target=myWebServer
+Source:=$(wildcard *.cpp)
+
+CC=g++
+CPPFLAGS=-Wall -c -O2 
+LIBS=-lrt -lpthread -lbase
+LIBSDIR=-L../base/build/lib
+
+
+
+.PHONY:all clean
+default_target: all
+
+all:$(Target)
+	# @echo $(Source)
+
+$(Target):$(patsubst %.cpp,%.o,$(Source))
+	$(CC) $(CPPFLAGS) $(LIBSDIR) $(LIBS) -o $@ $^
+	mv $^ ${ObjDir}
+	mv $@ $(LibDir)
+
+Channel.o: Channel.cpp Channel.h EventLoop.h Epoll.h config.h HttpData.h \
+ Util.h Timer.h ../base/MutexLock.h ../base/noncopyable.h \
+ ../base/CurrentThread.h ../base/Logging.h ../base/LogStream.h \
+ ../base/Thread.h ../base/CountDownLatch.h ../base/Condition.h Eventfd.h
+	$(CC) $(CPPFLAGS) $^ -o $@
+
+Eventfd.o: Eventfd.cpp Eventfd.h Channel.h EventLoop.h Epoll.h config.h \
+ HttpData.h Util.h Timer.h ../base/MutexLock.h ../base/noncopyable.h \
+ ../base/CurrentThread.h ../base/Logging.h ../base/LogStream.h \
+ ../base/Thread.h ../base/CountDownLatch.h ../base/Condition.h
+	$(CC) $(CPPFLAGS) $^ -o $@
+
+Listenfd.o: Listenfd.cpp Listenfd.h Channel.h EventLoop.h Epoll.h \
+ config.h HttpData.h Util.h Timer.h ../base/MutexLock.h \
+ ../base/noncopyable.h ../base/CurrentThread.h ../base/Logging.h \
+ ../base/LogStream.h ../base/Thread.h ../base/CountDownLatch.h \
+ ../base/Condition.h Eventfd.h ThreadPool.h
+	$(CC) $(CPPFLAGS) $^ -o $@
+
+Timer.o: Timer.cpp Timer.h Channel.h EventLoop.h Epoll.h config.h \
+ HttpData.h Util.h ../base/CurrentThread.h ../base/Logging.h \
+ ../base/LogStream.h ../base/noncopyable.h ../base/Thread.h \
+ ../base/CountDownLatch.h ../base/Condition.h ../base/MutexLock.h \
+ Eventfd.h
+	$(CC) $(CPPFLAGS) $^ -o $@
+
+Epoll.o: Epoll.cpp Epoll.h config.h Channel.h EventLoop.h HttpData.h \
+ Util.h Timer.h ../base/MutexLock.h ../base/noncopyable.h \
+ ../base/CurrentThread.h ../base/Logging.h ../base/LogStream.h \
+ ../base/Thread.h ../base/CountDownLatch.h ../base/Condition.h Eventfd.h
+	$(CC) $(CPPFLAGS) $^ -o $@
+
+HttpData.o: HttpData.cpp HttpData.h Channel.h EventLoop.h Epoll.h \
+ config.h Timer.h ../base/MutexLock.h ../base/noncopyable.h \
+ ../base/CurrentThread.h ../base/Logging.h ../base/LogStream.h \
+ ../base/Thread.h ../base/CountDownLatch.h ../base/Condition.h Eventfd.h \
+ Util.h
+	$(CC) $(CPPFLAGS) $^ -o $@
+
+Server.o: Server.cpp Server.h Channel.h EventLoop.h Epoll.h config.h \
+ HttpData.h Util.h Timer.h ../base/MutexLock.h ../base/noncopyable.h \
+ ../base/CurrentThread.h ../base/Logging.h ../base/LogStream.h \
+ ../base/Thread.h ../base/CountDownLatch.h ../base/Condition.h Eventfd.h \
+ ThreadPool.h Listenfd.h
+	$(CC) $(CPPFLAGS) $^ -o $@
+
+ThreadPool.o: ThreadPool.cpp ThreadPool.h EventLoop.h Channel.h Timer.h \
+ HttpData.h Util.h ../base/MutexLock.h ../base/noncopyable.h \
+ ../base/Logging.h ../base/LogStream.h Epoll.h config.h \
+ ../base/CurrentThread.h ../base/Thread.h ../base/CountDownLatch.h \
+ ../base/Condition.h Eventfd.h
+	$(CC) $(CPPFLAGS) $^ -o $@
+
+ EventLoop.o: EventLoop.cpp EventLoop.h Channel.h Timer.h HttpData.h \
+ Util.h ../base/MutexLock.h ../base/noncopyable.h ../base/Logging.h \
+ ../base/LogStream.h Epoll.h config.h ../base/CurrentThread.h \
+ ../base/Thread.h ../base/CountDownLatch.h ../base/Condition.h Eventfd.h
+	$(CC) $(CPPFLAGS) $^ -o $@
+
+ Main.o: Main.cpp EventLoop.h Channel.h Timer.h HttpData.h Util.h \
+ ../base/MutexLock.h ../base/noncopyable.h ../base/Logging.h \
+ ../base/LogStream.h Epoll.h config.h ../base/CurrentThread.h \
+ ../base/Thread.h ../base/CountDownLatch.h ../base/Condition.h Eventfd.h \
+ Server.h ThreadPool.h Listenfd.h
+	$(CC) $(CPPFLAGS) $^ -o $@
+
+ Util.o: Util.cpp Util.h
+	$(CC) $(CPPFLAGS) $^ -o $@
+	
+# $(patsubst %.cpp,%.o,$(Source)):%.c
+# 	CC $(CPPFLAGS) -o $@ $<
+
+
+# -include $(patsubst %.cpp,%.o,$(Source))
+# %.d: %.c
+#     @set -e; \
+#     rm -f $@; \
+#     $(CC) -MM $(CPPFLAGS) $< > $@.$$$$; \
+#     sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+#     rm -f $@.$$$$
+
+clean:
+	rm -rf ${BuildDir}

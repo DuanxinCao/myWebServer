@@ -1,0 +1,11 @@
+/home/web/myWebServer/build/Debug/CMakeFiles/rebuild_cache.dir
+/home/web/myWebServer/build/Debug/CMakeFiles/edit_cache.dir
+/home/web/myWebServer/build/Debug/myWebServer/base/CMakeFiles/rebuild_cache.dir
+/home/web/myWebServer/build/Debug/myWebServer/base/CMakeFiles/libserver_base.dir
+/home/web/myWebServer/build/Debug/myWebServer/base/CMakeFiles/edit_cache.dir
+/home/web/myWebServer/build/Debug/myWebServer/base/tests/CMakeFiles/rebuild_cache.dir
+/home/web/myWebServer/build/Debug/myWebServer/base/tests/CMakeFiles/LoggingTest.dir
+/home/web/myWebServer/build/Debug/myWebServer/base/tests/CMakeFiles/edit_cache.dir
+/home/web/myWebServer/build/Debug/myWebServer/net/CMakeFiles/rebuild_cache.dir
+/home/web/myWebServer/build/Debug/myWebServer/net/CMakeFiles/myWebServer.dir
+/home/web/myWebServer/build/Debug/myWebServer/net/CMakeFiles/edit_cache.dir
